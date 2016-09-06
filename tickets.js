@@ -1,38 +1,26 @@
 var request = require('request');
+var codeList = require('./stationCode');
 var queryBaseURL = 'https://kyfw.12306.cn/otn/lcxxcx/query';
 
 
-getStationCodeByStationName('1');
-// ticketsSeeking();
+
+ticketsSeeking('2016-09-10', 'shanghai', 'beijing');
 
 
 function getStationCodeByStationName(stationName) {
-    var options = {
-        url: 'https://kyfw.12306.cn/otn/resources/js/framework/station_name.js?station_version=1.8964'
-    }
-
-// solve self-signed error
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-
-    request(options, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            
-            var nameList = body.toString();
-
-            console.log(nameList);
-        } else if (error){
-            console.log(error);
-        } else {
-            console.log('fail to get station code');
-        }
-    })
+    var code = codeList.codesAndNames.match('\\|([A-Z]*)\\|' + stationName)[1];
+    console.log(code)
 }
 
 
 
 function ticketsSeeking(queryDate, from_station, to_station) {
+
+    var fsCode = codeList.codesAndNames.match('\\|([A-Z]*)\\|' + from_station)[1];
+    var tsCode = codeList.codesAndNames.match('\\|([A-Z]*)\\|' + to_station)[1];
+
     var options = {
-        url: queryBaseURL + '?purpose_codes=ADULT&queryDate=' + queryDate + '&from_station=' + from_station + '&to_station=' + to_station
+        url: queryBaseURL + '?purpose_codes=ADULT&queryDate=' + queryDate + '&from_station=' + fsCode + '&to_station=' + tsCode
     }
 
 
@@ -43,7 +31,7 @@ function ticketsSeeking(queryDate, from_station, to_station) {
         if (!error && response.statusCode == 200) {
             var json_body = JSON.parse(body);
 
-            console.log(json_body.data.datas.length);
+            console.log(json_body.data.datas);
         } else if (error){
             console.log(error);
         } else {
