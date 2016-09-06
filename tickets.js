@@ -1,14 +1,19 @@
 var request = require('request');
 var color = require('colors')
+var program = require('commander')
 var codeList = require('./stationCode');
-
 var queryBaseURL = 'https://kyfw.12306.cn/otn/lcxxcx/query';
 
 
 
-ticketsSeeking('2016-09-10', 'nanjing', 'yangzhou');
+program
+    .version('0.0.1')
+    .option('-g, --highRail', '只查询高铁或动车')
+    .parse(process.argv);
 
-
+(function() {
+    ticketsSeeking(program.args[2], program.args[0], program.args[1]);
+})();
 
 
 function ticketsSeeking(queryDate, from_station, to_station) {
@@ -36,12 +41,17 @@ function ticketsSeeking(queryDate, from_station, to_station) {
             console.log('-------------------------------------------------------------------------------------'.green);
 
             info.forEach(function(element) {
-                console.log(element.station_train_code.red + '\t' + element.start_time.cyan + '\t' + element.arrive_time.cyan + '\t' + element.lishi.yellow + '\t' + element.zy_num.white + '\t' + element.ze_num.white + '\t' + element.rw_num.white + '\t' + element.yw_num.white + '\t' + element.rz_num.white + '\t' + element.yz_num.white + '\t' + element.wz_num.white)
 
-                console.log('-------------------------------------------------------------------------------------'.green);
+                if (!program.highRail || (element.station_train_code.includes('G') || element.station_train_code.includes('D') )) {
+                    console.log(element.station_train_code.red + '\t' + element.start_time.cyan + '\t' + element.arrive_time.cyan + '\t' + element.lishi.yellow + '\t' + element.zy_num.white + '\t' + element.ze_num.white + '\t' + element.rw_num.white + '\t' + element.yw_num.white + '\t' + element.rz_num.white + '\t' + element.yz_num.white + '\t' + element.wz_num.white)
+
+                    console.log('-------------------------------------------------------------------------------------'.green);
+                }
+
 
             }, this);
 
+            
         } else if (error){
             console.log(error);
         } else {
