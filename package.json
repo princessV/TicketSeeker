@@ -1,0 +1,9 @@
+{
+  "name": "TicketSeeker",
+  "version": "0.0.1",
+  "description": "Search tickets on 12306",
+  "dependencies": {
+    "request": "^2.74.0",
+    "commander": "2.9.0"
+  }
+}
